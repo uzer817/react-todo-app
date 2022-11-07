@@ -1,8 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Todo from "./components/Todo";
+import TodoForm from "./TodoForm";
+import "./App.css";
 
 function App() {
   const [todoText, setTodoText] = useState("");
   const [todos, setTodos] = useState([]);
+  const [isEdit, setİsEdit] = useState(false);
+  const [willUpdateTodo, setWillUpdateTodo] = useState("");
+
+  useEffect(() => {
+    const todosFromLocalStorage = localStorage.getItem("todos");
+    console.log(todosFromLocalStorage);
+    if (todosFromLocalStorage === null) {
+      localStorage.setItem("todos", JSON.stringify([]));
+    } else {
+      setTodos(JSON.parse(todosFromLocalStorage));
+    }
+  }, []);
+
+  const deleteTodo = (id) => {
+    console.log(id);
+    const filteredTodos = todos.filter((item) => item.id !== id);
+    setTodos(filteredTodos);
+    localStorage.setItem("todos", JSON.stringify(filteredTodos));
+  };
 
   const changeIsDone = (id) => {
     const searchedTodo = todos.find((item) => item.id === id);
@@ -12,7 +34,10 @@ function App() {
     };
     const filteredTodos = todos.filter((item) => item.id !== id);
     setTodos([updatedTodo, ...filteredTodos]);
-    console.log(filteredTodos);
+    localStorage.setItem(
+      "todos",
+      JSON.stringify([updatedTodo, ...filteredTodos])
+    );
   };
 
   const handleSubmit = (event) => {
@@ -24,50 +49,62 @@ function App() {
 
     const hasTodos = todos.find((item) => item.text === todoText);
     console.log(hasTodos);
-    if (hasTodos !== undefined){
-    alert("You have the todo already");
-    return;
+    if (hasTodos !== undefined) {
+      alert("You have the todo already");
+      return;
     }
-    const newTodo = {
-      id: new Date().getTime(),
-      isDone: false,
-      text: todoText,
-      date: new Date(),
-    };
-    setTodos([newTodo, ...todos]);
-    setTodoText("");
+    if (isEdit === true) {
+      console.log(willUpdateTodo, "todo'yu güncelleyeceğiz");
+      const searchedTodo = todos.find((item) => item.id === willUpdateTodo);
+      const updatedTodo = {
+        ...searchedTodo,
+        text: todoText,
+      };
+      const filteredTodos = todos.filter((item) => item.id !== willUpdateTodo);
+      setTodos([...filteredTodos, updatedTodo]);
+      localStorage.setItem(
+        "todos",
+        JSON.stringify([...filteredTodos, updatedTodo])
+      );
+      setTodoText("");
+      setİsEdit(false);
+      setWillUpdateTodo("");
+    } else {
+      const newTodo = {
+        id: new Date().getTime(),
+        isDone: false,
+        text: todoText,
+        date: new Date(),
+      };
+      console.log("newTodo", newTodo);
+      setTodos([newTodo, ...todos]);
+      localStorage.setItem("todos", JSON.stringify([newTodo, ...todos]));
+      setTodoText("");
+    }
   };
   return (
     <div className="container">
       <h1 className="text-center my-5">Todo App</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="input-group mb-3">
-          <input
-            value={todoText}
-            type="text"
-            className="form-control"
-            placeholder="Type your todo"
-            onChange={(event) => setTodoText(event.target.value)}
-          />
-          <button className="btn btn-primary" type="submit">
-            ADD
-          </button>
-        </div>
-      </form>
+      <TodoForm
+        handleSubmit={handleSubmit}
+        todoText={todoText}
+        setTodoText={setTodoText}
+        isEdit={isEdit}
+      />
+
       {todos.length <= 0 ? (
         <p className="text-center my-5">You don't have any todos yet.</p>
       ) : (
         <>
           {todos.map((item) => (
-            <div className="alert alert-secondary d-flex justify-content-between aling-items-center">
-              <p>{item.text}</p>
-              <button
-                onClick={() => changeIsDone(item.id)}
-                className="btn btn-sm btn-secondary"
-              >
-                {item.isDone === false ? "Done" : "Undone"}
-              </button>
-            </div>
+            <Todo
+              item={item}
+              deleteTodo={deleteTodo}
+              setİsEdit={setİsEdit}
+              setWillUpdateTodo={setWillUpdateTodo}
+              setTodoText={setTodoText}
+              changeIsDone={changeIsDone}
+            />
           ))}
         </>
       )}

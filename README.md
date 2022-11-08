@@ -7,7 +7,7 @@ Projede react companent kullanımları, funcion based methodu ve diğer başlang
 
 TODO APP
 
-<Link to="https://earnest-empanada-d3e5b0.netlify.app/"> Site Linki </Link>
+<Link ="https://earnest-empanada-d3e5b0.netlify.app/"> Site Linki </Link>
 
 <h3> SİTE GÖRÜNÜMÜ </h3>
 

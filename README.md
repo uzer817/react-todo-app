@@ -7,12 +7,12 @@ Projede react companent kullanımları, funcion based methodu ve diğer başlang
 
 TODO APP
 
-<link ![](https://earnest-empanada-d3e5b0.netlify.app/)> Site Linki  </link>
+<link ![https://earnest-empanada-d3e5b0.netlify.app/]()> Site Linki  </link>
 
 <h3> SİTE GÖRÜNÜMÜ </h3>
 
 ![](todo.gif)
 
-<h3> Görüntüler </h3>
+<h3> GÖRÜNTÜ </h3>
 
 ![](todo1.gif)
